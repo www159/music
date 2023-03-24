@@ -12,9 +12,15 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.14",
     "@tauri-apps/api": "^1.2.0",
+    "i18next": "^22.4.13",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-i18next": "^12.2.0",
+    "react-router-dom": "^6.9.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.2.2",
