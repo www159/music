@@ -525,6 +525,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@juggle/resize-observer@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
+  integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
+
 "@mui/base@5.0.0-alpha.122":
   version "5.0.0-alpha.122"
   resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-alpha.122.tgz#707c33834cfb627b81c273a25d50b2bef44a1256"
@@ -543,6 +548,13 @@
   version "5.11.14"
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-5.11.14.tgz#0ea7d3890fa50e1fc8028674f39ee8b39b7d43c0"
   integrity sha512-rfc08z6+3Fif+Gopx2/qmk+MEQlwYeA+gOcSK048BHkTty/ol/boHuVeL2BNC/cf9OVRjJLYHtVb/DeW791LSQ==
+
+"@mui/icons-material@^5.11.11":
+  version "5.11.11"
+  resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-5.11.11.tgz#d4e01bd405b0dac779f5e060586277f91f3acb6e"
+  integrity sha512-Eell3ADmQVE8HOpt/LZ3zIma8JSvPh3XgnhwZLT0k5HRqZcd6F/QDHc7xsWtgz09t+UEFvOYJXjtrwKmLdwwpw==
+  dependencies:
+    "@babel/runtime" "^7.21.0"
 
 "@mui/material@^5.11.14":
   version "5.11.14"
@@ -861,6 +873,14 @@
     "@babel/plugin-transform-react-jsx-source" "^7.19.6"
     magic-string "^0.27.0"
     react-refresh "^0.14.0"
+
+"@xstate/react@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@xstate/react/-/react-3.2.1.tgz#ac7b78e8c1d6d3802dfb29a6499f18e48b3dfdb3"
+  integrity sha512-L/mqYRxyBWVdIdSaXBHacfvS8NKn3sTKbPb31aRADbE9spsJ1p+tXil0GVQHPlzrmjGeozquLrxuYGiXsFNU7g==
+  dependencies:
+    use-isomorphic-layout-effect "^1.0.0"
+    use-sync-external-store "^1.0.0"
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
@@ -1636,6 +1656,11 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+hex@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/hex/-/hex-0.1.0.tgz#012299fb30a65953a093bbbcf529e978430fc485"
+  integrity sha512-B2q2b6P/tZsKJXgbCHvgcsYlsHBTNvfoAiNJ+XzsS0fudEbOU7f3sig924IBfDHqdLrObsiXWfHzuHW1x+MxQQ==
+
 hoist-non-react-statics@^3.3.1:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
@@ -1830,6 +1855,11 @@ isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz"
   integrity sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==
+
+jotai@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-2.0.3.tgz#3b67cda9f6d5feb70a14db0b842a9873aacda8b5"
+  integrity sha512-MMjhSPAL3RoeZD9WbObufRT2quThEAEknHHridf2ma8Ml7ZVQmUiHk0ssdbR3F0h3kcwhYqSGJ59OjhPge7RRg==
 
 js-sdsl@^4.1.4:
   version "4.4.0"
@@ -2165,6 +2195,13 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
+react-error-boundary@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-4.0.2.tgz#b73d79b59688ee718cdba1f0296ae231868f7888"
+  integrity sha512-/h21OS80hQ1m/s5UVOp1JKkC8XmUo0rOTRUliGSmWtvswkbbijuQ074K0QLEHwxwwesTt7ksR74/9EHImqWo+A==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 react-i18next@^12.2.0:
   version "12.2.0"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-12.2.0.tgz#010e3f6070b8d700442947233352ebe4b252d7a1"
@@ -2424,6 +2461,13 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+swr@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-2.1.1.tgz#9b9fd7f96236c9c0db8c96183b26661f857a64b8"
+  integrity sha512-OgwqZmpjOgxNbaez6qzTVqiRWn+Ti5Uzmktk2c01Afqwc50q6z15DeNC8m9G1aY+w2BwEAsKvk59iq6aHlhgyw==
+  dependencies:
+    use-sync-external-store "^1.2.0"
+
 text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz"
@@ -2504,6 +2548,16 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
+use-isomorphic-layout-effect@^1.0.0:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.2.tgz#497cefb13d863d687b08477d9e5a164ad8c1a6fb"
+  integrity sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==
+
+use-sync-external-store@^1.0.0, use-sync-external-store@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
+  integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
+
 vite@^4.0.0:
   version "4.2.1"
   resolved "https://registry.npmjs.org/vite/-/vite-4.2.1.tgz"
@@ -2560,6 +2614,11 @@ wrappy@1:
   version "1.0.2"
   resolved "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
+
+xstate@^4.37.1:
+  version "4.37.1"
+  resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.37.1.tgz#1dd5a8bda179ef6cbb42e0e5fe06c99048a1ce3c"
+  integrity sha512-MuB7s01nV5vG2CzaBg2msXLGz7JuS+x/NBkQuZAwgEYCnWA8iQMiRz2VGxD3pcFjZAOih3fOgDD3kDaFInEx+g==
 
 yallist@^3.0.2:
   version "3.1.1"
