@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 base64 = "0.21.0"
 hex = "0.4.3"
+isahc = { version = "1.7.2", features = ["cookies"]}
 lazy_static = "1.4.0"
 openssl = "0.10.48"
 rand = "0.8.5"
+urlqstring = "0.3.5"
