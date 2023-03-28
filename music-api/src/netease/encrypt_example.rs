@@ -350,10 +350,18 @@ mod encrypt_tests {
     fn test_recommend_resource_api() {
         use urlqstring::QueryParams;
 
+        // ANCHOR - test song list 
+        
+        let params = QueryParams::from_vec(vec![
+            ("cat", "全部"),
+            ("order", "hot"),
+            ("offset", "0"),
+            ("limit", "50"),
+        ]);
 
         let csrf = "c528c5a64b34793227f802f5eef69c9a";
 
-        let json = QueryParams::from_vec(vec![("csrf_token", csrf)]).json();
+        let json = params.add_query_string("csrf_token", "").json();
 
         let (params, enc_sec_key) = weapi_enc(&json);
 
@@ -368,16 +376,16 @@ mod encrypt_tests {
 
         let user_agent = "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Mobile Safari/537.36";
 
-        let url = format!("https://music.163.com/weapi/discovery/recommend/resource?csrf_token={}", csrf);
+        let url = format!("https://music.163.com/weapi/playlist/list?csrf_token={}", csrf);
         let request = isahc::Request::post(&url)
-                    .header("Cookie", "os=pc; appver=2.7.1.198277")
-                    .header("Accept", "*/*")
-                    .header("Accept-Language", "en-US,en;q=0.5")
-                    .header("Connection", "keep-alive")
-                    .header("Content-Type", "application/x-www-form-urlencoded")
-                    .header("Host", "music.163.com")
-                    .header("Referer", "https://music.163.com")
-                    .header("User-Agent", user_agent)
+                    // .header("Cookie", "os=pc; appver=2.7.1.198277")
+                    // .header("Accept", "*/*")
+                    // .header("Accept-Language", "en-US,en;q=0.5")
+                    // .header("Connection", "keep-alive")
+                    // .header("Content-Type", "application/x-www-form-urlencoded")
+                    // .header("Host", "music.163.com")
+                    // .header("Referer", "https://music.163.com")
+                    // .header("User-Agent", user_agent)
                     // .header("Cookie", cookie_simp)
                     .body(body)
                     .unwrap();

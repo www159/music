@@ -35,6 +35,10 @@ tauri使用三种方式进行前后端交互分别是http,rpc,消息订阅
 其中消息订阅最为灵活，我还年轻，驾驭不了，因此使用简单的rpc就行
 
 （说不定rpc底层用的还是http或消息订阅？）
+
+### 过程宏
+tuari 的rpc过程宏`#[tauri::command]`隐藏了三个可选参数，类型分别是`tauri::Window`, `tauri::State`和`tauri::AppHandler`。
+
 ### react相关
 react里可以说的太多了，基本上是这么一套组合拳:
 - hint
