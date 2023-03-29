@@ -5,7 +5,7 @@ use super::encryption::{EncryptionMethod, self};
 
 pub mod list_playlist;
 
-enum USERPLATFORM<'a> {
+pub enum USERPLATFORM<'a> {
     PC,
     MOBILE,
     OTHER(Option<&'a str>),
@@ -98,6 +98,7 @@ pub async fn request(
                 .await.map_err(|err| {anyhow::anyhow!("failed to request: {}", err.to_string())})?
                 .text()
                 .await.map_err(|err| { anyhow::anyhow!("failed to read response body: {}", err.to_string()) })
-        }
+        },
+        _ => Err(anyhow::anyhow!(""))
     }
 }
