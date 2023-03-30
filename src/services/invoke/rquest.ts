@@ -1,9 +1,11 @@
 import { invoke } from "@tauri-apps/api";
 
 enum RequestInvoke {
-  getResourceRecomend = "get_resources_recommend",
+  listPlaylist = "list_playlist",
 }
 
-export const getSongListRecommend = async() => {
-  return invoke<SongList>(RequestInvoke.getResourceRecomend);
+export const listPlaylist = async (payload: PlayListData) => {
+  return invoke<Playlist[]>(RequestInvoke.listPlaylist, {
+    payload
+  });
 };

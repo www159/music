@@ -1,3 +1,4 @@
+use log::kv::{Value, value};
 use rand_core::RngCore;
 
 
@@ -25,7 +26,9 @@ static AES_IV: &str = "0102030405060708";
 pub fn weapi_encryption(data: &str) -> (String, String) {
     // `data` should be json string
     #[cfg(feature = "music-dev")]
-    let _ = serde_json::from_str(data).unwrap();
+    {
+        log::debug!("weapi get obj: {data}");
+    }
     
     use openssl::symm;
     use openssl::rsa::{ Rsa, Padding };
@@ -72,7 +75,7 @@ pub fn weapi_encryption(data: &str) -> (String, String) {
 
         let mut to_buf = vec![0; rsa.size() as usize];
 
-        let size = rsa.public_encrypt(&random_key_128, &mut to_buf, Padding::NONE).unwrap();
+        let _ = rsa.public_encrypt(&random_key_128, &mut to_buf, Padding::NONE).unwrap();
 
         // encode the `rsa-encoded-bytes` to `hex string` at last
         hex::encode(to_buf)       

@@ -1,9 +1,10 @@
+pub mod list_playlist;
+
 use isahc::{http, AsyncReadResponseExt};
 use urlqstring::QueryParams;
 
 use super::encryption::{EncryptionMethod, self};
 
-pub mod list_playlist;
 
 pub enum USERPLATFORM<'a> {
     PC,

@@ -27,6 +27,7 @@ urlqstring = "0.3.5"
 anyhow = "1.0.70"
 rand = "0.8.5"
 actix-rt = "2.8.0"
+async-std = "1.12.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

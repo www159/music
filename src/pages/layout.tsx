@@ -3,7 +3,7 @@ import useSWR from "swr";
 // import { useMachine } from "@xstate/react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { getBaseConfig } from "@/services/cmd";
+import { getBaseConfig } from "@/services/invoke/config";
 import { BaseErrorBoundary } from "@/components/base/base-error-bountery";
 import { routers } from "./routers";
 import { Route, Routes } from "react-router-dom";
