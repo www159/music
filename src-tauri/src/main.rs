@@ -3,6 +3,7 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
+use services::setup;
 use tauri::async_runtime::Mutex;
 
 mod applications;
@@ -15,16 +16,15 @@ fn greet(name: &str) -> String {
 }
 
 fn main() {
-    let netease_app = applications::netease::App::new();
+
 
     let builder = tauri::Builder::default()
+        .setup(|app| Ok(services::setup(app)))
         .invoke_handler(tauri::generate_handler![
             greet,
             services::netease::list_playlist,
-        ])
-        .manage(applications::AppState {
-            netease_app: std::sync::Mutex::new(netease_app)
-        });
+            services::netease::test_cookie,
+        ]);
 
     let app = builder
         .build(tauri::generate_context!())

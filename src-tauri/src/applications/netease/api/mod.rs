@@ -3,6 +3,8 @@ pub mod list_playlist;
 use isahc::{http, AsyncReadResponseExt};
 use urlqstring::QueryParams;
 
+use crate::applications::LOG_TARGET;
+
 use super::encryption::{EncryptionMethod, self};
 
 
@@ -70,12 +72,12 @@ pub async fn request(
                     }
             };
 
-            log::debug!(target: "app", "create request with user-agent: {user_agent_str}");
+            log::debug!(target: LOG_TARGET, "create request with user-agent: {user_agent_str}");
 
             // encrypt `params` with `encryption_method`
             let body = match encryption_method {
                 EncryptionMethod::WEAPI => {
-                    log::debug!(target: "app", "begin request with WEAPI encryption");
+                    log::debug!(target: LOG_TARGET, "begin request with WEAPI encryption");
                     params.add_query_string("crsf_token", &csrf);
                     let json_str = params.json();
                     let (enc_params, enc_sec_key) = encryption::weapi_encryption(json_str.as_str());
