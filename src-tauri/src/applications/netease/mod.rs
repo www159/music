@@ -38,6 +38,7 @@ pub enum ListRequest {
 pub enum GetRequest {
     LoginStatus,
     Qrcode,
+    QrloginStatus(String)
 }
 //~SECTION
 
@@ -48,7 +49,8 @@ pub enum ListResponse {
 
 pub enum GetResponse {
     LoginStatus(LoginStatus),
-    Qrcode(String),
+    Qrcode(get_qrcode::Qrcode),
+    QrloginStatus(get_qrlogin_status::QrloginStatus),
 }
 //~SECTION
 
@@ -68,6 +70,7 @@ use tauri::api::path::cache_dir;
 use crate::applications::netease::api::get_qrcode;
 
 use self::api::get_login_status::LoginStatus;
+use self::api::get_qrlogin_status;
 
 use super::LOG_TARGET;
 
@@ -245,6 +248,17 @@ impl App {
                     Ok(response) => Some(GetResponse::Qrcode(response)),
                     Err(err) => {
                         log::error!(target: LOG_TARGET, "failed to request Get qrcode: {}", err.to_string());
+                        None
+                    }
+                }
+            },
+
+            GetRequest::QrloginStatus(unikey) => {
+                log::debug!(target: LOG_TARGET, "try to request Get with payload: {:#?}", unikey);
+                match get_qrlogin_status::request(&unikey, &self.client).await {
+                    Ok(reponse) => Some(GetResponse::QrloginStatus(reponse)),
+                    Err(err) => {
+                        log::error!(target: LOG_TARGET, "failed to request Get qrcode login status: {}", err.to_string());
                         None
                     }
                 }
