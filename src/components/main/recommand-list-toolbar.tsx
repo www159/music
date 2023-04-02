@@ -18,7 +18,7 @@ export const RecommandListToolbar = (props: RecommandListToolBarProps) => {
   const [num, setNum] = useState(0);
 
   // SECTION initialize effect
-  useEffect(debounce(() => {
+  useEffect(() => {
     const unlisten = listen("test-emit", ({ payload }) => {
       setNum(num => num + 1);
       console.log(payload);
@@ -27,7 +27,7 @@ export const RecommandListToolbar = (props: RecommandListToolBarProps) => {
         unlisten.then(f => f());
       };
     });
-  }, 500), []);
+  }, []);
   // ~SECTION
   return (
     <Box

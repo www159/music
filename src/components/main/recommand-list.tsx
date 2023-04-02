@@ -21,12 +21,12 @@ export const RecommandList = (props: RecommandListProps) => {
   // ~SECTION
   
   // SECTION initialize effect
-  useEffect(debounce(() => {
+  useEffect(() => {
     listPlaylist({})
       .then((playlists) => {
         setPlaylists(playlists);
       });
-  }, 800), []);
+  }, []);
   // ~SECTION
   return (
     <Stack

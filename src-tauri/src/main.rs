@@ -15,7 +15,7 @@ fn greet(name: &str) -> String {
 
 fn main() {
 
-    // FIXME use parking_lot primitives
+    // FIXME use `parking_lot` primitives
     let builder = tauri::Builder::default()
         .setup(|app| Ok(services::setup(app)))
         .invoke_handler(tauri::generate_handler![
