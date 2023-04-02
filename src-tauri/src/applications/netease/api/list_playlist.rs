@@ -22,7 +22,7 @@ pub struct Playlist {
 #[derive(Deserialize)]
 struct Json {
     pub playlists: Vec<PlayListJson>,
-    pub code: i64
+    pub code: i32
 }
 
 #[derive(Deserialize)]
@@ -46,9 +46,6 @@ pub async fn request(playlist_data: PlayListData, client: &isahc::HttpClient) ->
     let offset = playlist_data.offset.unwrap_or(0).to_string();
     let limit = playlist_data.limit.unwrap_or(50).to_string();
 
-    // let params_map = hash_map::HashMap::from([
-
-    // ]);
     let params = QueryParams::from_vec(vec![
         ("order", order.as_str()),
         ("cat", cat.as_str()),
@@ -99,13 +96,13 @@ mod tests {
     async fn request_works() {
     	// guest api
     	let client = isahc::HttpClient::new().unwrap();
-    	let requestData = PlayListData {
+    	let request_data = PlayListData {
     	    order: None,
     	    cat: None,
     	    limit: None,
     	    offset: None,
     	};
-    	let playlists = request(requestData, &client).await.unwrap();
+    	let playlists = request(request_data, &client).await.unwrap();
     	println!("{:#?}", playlists);
     }
     #[test]

@@ -4,7 +4,7 @@ pub mod netease;
 
 // SECTION const
 pub const APP_DIR: &str = "music-all";
-const LOG_TARGET: &str = "app";
+pub const LOG_TARGET: &str = "app";
 // ~SECTION
 
 pub struct AppState {

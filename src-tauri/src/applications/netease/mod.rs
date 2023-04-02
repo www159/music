@@ -26,16 +26,29 @@ const BASE_URI_LIST: [&str; 12] = [
 
 //SECTION Rquest api
 use api::list_playlist;
+
+use api::get_login_status;
+
 use isahc::cookies::CookieBuilder;
 
 pub enum ListRequest {
     PlayList(list_playlist::PlayListData),
+}
+
+pub enum GetRequest {
+    LoginStatus,
+    Qrcode,
 }
 //~SECTION
 
 //SECTION Response api
 pub enum ListResponse {
     PlayList(Vec<list_playlist::Playlist>),
+}
+
+pub enum GetResponse {
+    LoginStatus(LoginStatus),
+    Qrcode(String),
 }
 //~SECTION
 
@@ -51,6 +64,10 @@ use cookie_store::CookieStore;
 use isahc::cookies::CookieJar;
 use isahc::prelude::Configurable;
 use tauri::api::path::cache_dir;
+
+use crate::applications::netease::api::get_qrcode;
+
+use self::api::get_login_status::LoginStatus;
 
 use super::LOG_TARGET;
 
@@ -77,6 +94,7 @@ impl App {
         }
     }
 
+    // SECTION cookie store&load
     pub fn set_cookie(&mut self, cookie_jar: isahc::cookies::CookieJar) {
         log::debug!(target: LOG_TARGET, "try to set cookie: {:#?}", cookie_jar);
 
@@ -103,6 +121,7 @@ impl App {
 
         if let Some(cookie_jar) = self.client.cookie_jar() {
             
+            // get cookie dir
             let cookie_dir = match self.cookie_dir() {
                 Ok(cookie_dir) => cookie_dir,
                 Err(err) => {
@@ -111,6 +130,7 @@ impl App {
                 }
             };
 
+            // check cookie dir
             if !cookie_dir.exists() {
                 if let Err(err) = fs::create_dir_all(&cookie_dir) {
                     log::error!(target: LOG_TARGET, "failed to create cookie dir: {}", err.to_string());
@@ -118,6 +138,7 @@ impl App {
                 }
             }
 
+            // create or open cookie file
             let mut file = match fs::File::create(cookie_dir.join(COOKIE_FILENAME)) {
                 Ok(file) => file,
                 Err(err) => {
@@ -126,12 +147,12 @@ impl App {
                 }
             };
 
+            // parse `isahc::Cookie` to `cookie_store::Cookie` to json
             let mut cookie_store = cookie_store::CookieStore::default();
             for base_uri in BASE_URI_LIST {
                 let uri = &base_uri.parse().unwrap();
                 let url = &base_uri.parse().unwrap();
                 
-                // parse `iashc::Cookie` to `cookie_store::Cookie`
                 for cookie in cookie_jar.get_for_uri(uri) {
                     let cookie_locale = match cookie_store::Cookie::parse(
                         format!(
@@ -161,17 +182,19 @@ impl App {
         }
     }
 
-    pub fn load_cookie(&self) -> Option<CookieJar> {
+    pub fn load_cookie(&mut self) {
+        // open cookie file
         let file = match fs::File::open(self
             .cookie_dir().unwrap()
             .join(COOKIE_FILENAME)) {
                 Ok(file) => file,
                 Err(err) => {
                     log::error!(target: LOG_TARGET, "failed to open {}: {}", COOKIE_FILENAME, err.to_string());
-                    return None;
+                    return;
                 }
             };
         
+        // parse json to `cookie_store::Cookie` to `isahc::cookie`
         match CookieStore::load_json(io::BufReader::new(file)) {
             Ok(cookie_store) => {
                 let cookie_jar = CookieJar::default();
@@ -184,7 +207,7 @@ impl App {
                                 Ok(cookie) => cookie,
                                 Err(err) => {
                                     log::error!(target: LOG_TARGET, "failed to parse locale cookie: {}", err.to_string());
-                                    return None;
+                                    return;
                                 }
                             };
 
@@ -193,31 +216,58 @@ impl App {
                         }
                     }
                 }
-                return Some(cookie_jar);
+                log::debug!(target: LOG_TARGET, "load cookie: {:#?}", cookie_jar);
+                self.set_cookie(cookie_jar);
             }
             Err(err) => {
                 log::error!(target: LOG_TARGET, "failed to read {}: {}", COOKIE_FILENAME, err.to_string());
-                return None;
+                return;
             }
         }
     }
+    // ~SECTION cookie store&load
 
+    pub async fn get(&self, api: GetRequest) -> Option<GetResponse> {
+        match api {
+            GetRequest::LoginStatus => {
+                log::debug!(target: LOG_TARGET, "try to request GET with payload None");
+                match get_login_status::request(&self.client).await {
+                    Ok(response) => Some(GetResponse::LoginStatus(response)),
+                    Err(err) => {
+                        log::error!(target: LOG_TARGET, "failed to request Get login status: {}", err.to_string());
+                        None
+                    }
+                }
+            },
+            GetRequest::Qrcode => {
+                log::debug!(target: LOG_TARGET, "try to request Get with payload None");
+                match get_qrcode::request(&self.client).await {
+                    Ok(response) => Some(GetResponse::Qrcode(response)),
+                    Err(err) => {
+                        log::error!(target: LOG_TARGET, "failed to request Get qrcode: {}", err.to_string());
+                        None
+                    }
+                }
+            }
+        }
+    }   
     
     pub async fn list(&self, api: ListRequest) -> Option<ListResponse> {
         match api {
             ListRequest::PlayList(playlist_data) => {
-                log::debug!(target: LOG_TARGET, "try to request with payload: {:#?}", playlist_data);
-                let response = match list_playlist::request(playlist_data, &self.client).await {
-                    Ok(response) => response,
+                log::debug!(target: LOG_TARGET, "try to request LIST with payload: {:#?}", playlist_data);
+                match list_playlist::request(playlist_data, &self.client).await {
+                    Ok(response) => Some(ListResponse::PlayList(response)),
                     Err(err) => {
-                        log::error!(target: LOG_TARGET, "failed to request the list : {}", err.to_string());
-                        return None;
+                        log::error!(target: LOG_TARGET, "failed to request List playlists: {}", err.to_string());
+                        None
                     }
-                };
-                Some(ListResponse::PlayList(response))
+                }
             }
         }
     }
+
+
 }
 
 #[cfg(test)]

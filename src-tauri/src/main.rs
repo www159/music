@@ -24,6 +24,7 @@ fn main() {
             greet,
             services::netease::list_playlist,
             services::netease::test_cookie,
+            services::netease::test_cookie_load,
         ]);
 
     let app = builder

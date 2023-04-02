@@ -2,7 +2,7 @@ const SERIVCE_DIR: &str = "log";
 
 use std::{fs};
 use log::LevelFilter;
-use tauri::api::path::home_dir;
+use tauri::api::path::{cache_dir};
 use chrono::Local;
 use log4rs::encode::pattern::PatternEncoder;
 use log4rs::append::console::ConsoleAppender;
@@ -12,8 +12,8 @@ use crate::applications::APP_DIR;
 
 
 pub fn init_log() -> anyhow::Result<()> {
-    let log_dir = home_dir()
-        .ok_or(anyhow::anyhow!("failed to get home dir"))?
+    let log_dir = cache_dir()
+        .ok_or(anyhow::anyhow!("failed to get cache dir"))?
         .join(APP_DIR)
         .join(SERIVCE_DIR);
 

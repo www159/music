@@ -7,7 +7,7 @@ import { getBaseConfig } from "@/services/invoke/config";
 import { BaseErrorBoundary } from "@/components/base/base-error-bountery";
 import { routers } from "./routers";
 import { Route, Routes } from "react-router-dom";
-import { Box, Divider, Grid, Paper, Stack, ThemeProvider, createTheme } from "@mui/material";
+import { Divider, Paper, Stack, ThemeProvider, createTheme } from "@mui/material";
 import { PlatformBar } from "@/components/layout/platform-bar";
 import { NaviButtons } from "@/components/layout/navi-buttons";
 import { PlayerBar } from "@/components/layout/player-bar";
@@ -34,7 +34,7 @@ export const Layout = () => {
 
   
 
-  //SECTION - initialize
+  //SECTION - initialize effect
   useEffect(() => {
     // get theme from backend
     // TODO use material default theme, customize theme

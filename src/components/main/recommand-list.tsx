@@ -3,28 +3,31 @@ import { atomPlaylists, atomPlaylistsSome } from "@/stores/recommend-list";
 import { Avatar, Box, Grid, Paper, Stack, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
-import useSWR from "swr";
 import { RecommandListToolbar } from "./recommand-list-toolbar";
 
-// SECTION props
+// SECTION props type
 interface RecommandListProps {
   label: string
 }
 // ~SECTION
 export const RecommandList = (props: RecommandListProps) => {
+  // SECTION props
   const { label } = props;
+  // ~SECTION
 
   // SECTION store
   const [, setPlaylists] = useAtom(atomPlaylists);
   const [playlists, ] = useAtom(atomPlaylistsSome);
   // ~SECTION
   
+  // SECTION initialize effect
   useEffect(() => {
     listPlaylist({})
       .then((playlists) => {
         setPlaylists(playlists);
       });
   }, []);
+  // ~SECTION
   return (
     <Stack
       sx={{
@@ -40,7 +43,7 @@ export const RecommandList = (props: RecommandListProps) => {
       >
         <Grid
           container
-          columns={{ xs: 4, md: 12 }}
+          columns={{ xs: 2, sm: 4, md: 12 }}
           sx={{
             marginTop: "6px",
           }}
