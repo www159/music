@@ -1,6 +1,6 @@
 import { listPlaylist } from "@/services/invoke/rquest";
 import { atomPlaylists, atomPlaylistsSome } from "@/stores/recommend-list";
-import { Avatar, Box, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Grid, Paper, Stack, Typography, debounce } from "@mui/material";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { RecommandListToolbar } from "./recommand-list-toolbar";
@@ -21,12 +21,12 @@ export const RecommandList = (props: RecommandListProps) => {
   // ~SECTION
   
   // SECTION initialize effect
-  useEffect(() => {
+  useEffect(debounce(() => {
     listPlaylist({})
       .then((playlists) => {
         setPlaylists(playlists);
       });
-  }, []);
+  }, 800), []);
   // ~SECTION
   return (
     <Stack

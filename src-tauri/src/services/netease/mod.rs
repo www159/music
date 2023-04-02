@@ -1,5 +1,4 @@
-use applications::AppState;
-
+use crate::services::AppState;
 use applications::netease::ListRequest;
 use applications::netease::ListResponse;
 use applications::netease::api::list_playlist::Playlist;
@@ -17,6 +16,8 @@ pub fn list_playlist(payload: PlayListData, app_state: tauri::State<'_, AppState
 
 
 use isahc::cookies::CookieJar;
+
+use super::emit::EmitterField;
 #[tauri::command]
 pub fn test_cookie(app_state: tauri::State<'_, AppState>) {
     let mut app = app_state.netease_app.lock().unwrap();
@@ -28,7 +29,9 @@ pub fn test_cookie(app_state: tauri::State<'_, AppState>) {
 
 #[tauri::command]
 pub fn test_cookie_load(app_state: tauri::State<'_, AppState>) {
-    let mut app = app_state.netease_app.lock().unwrap();
-    app.load_cookie();
-    log::debug!(target: applications::LOG_TARGET, "load cookie!");
+    // let mut app = app_state.netease_app.lock().unwrap();
+    // app.load_cookie();
+    
+    let emitter = app_state.emit_service.lock().unwrap();
+    emitter.emit(EmitterField::MainWindow, "test-emit", "ok");
 }

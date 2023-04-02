@@ -5,7 +5,7 @@ use crate::applications::netease::encryption;
 use super::super::api;
 
 #[derive(Debug, Default, Serialize)]
-pub struct LoginStatus {
+pub struct UserAccount {
     pub user_id: u64,
     pub nickname: String,
     pub avatar_img_url: String,
@@ -26,7 +26,7 @@ struct  ProfileJson {
     pub avatar_img_url: String,
 }
 
-pub async fn request(client: &isahc::HttpClient) -> anyhow::Result<LoginStatus> {
+pub async fn request(client: &isahc::HttpClient) -> anyhow::Result<UserAccount> {
     let res_str = api::request(
         isahc::http::method::Method::POST,
         "/api/nuser/account/get",
@@ -39,13 +39,13 @@ pub async fn request(client: &isahc::HttpClient) -> anyhow::Result<LoginStatus> 
     into(res_str)
 }
 
-fn into(res_str: String) -> anyhow::Result<LoginStatus> {
+fn into(res_str: String) -> anyhow::Result<UserAccount> {
     let obj: Json = serde_json::from_str(&res_str)?;
     
     match obj.code {
         200 => {
             if let Some(profile) = obj.profile {
-                return Ok(LoginStatus {
+                return Ok(UserAccount {
                     user_id: profile.user_id,
                     avatar_img_url: profile.avatar_img_url,
                     nickname: profile.nickname
@@ -62,7 +62,7 @@ fn into(res_str: String) -> anyhow::Result<LoginStatus> {
     } 
 }
 
-async fn request_cookie(csrf: &str, cookie: &str, client: &isahc::HttpClient) -> anyhow::Result<LoginStatus> {
+async fn request_cookie(csrf: &str, cookie: &str, client: &isahc::HttpClient) -> anyhow::Result<UserAccount> {
     let res_str = api::request_cookie(
         isahc::http::method::Method::POST,
         "/api/nuser/account/get",

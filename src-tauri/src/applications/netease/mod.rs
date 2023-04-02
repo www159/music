@@ -27,7 +27,7 @@ const BASE_URI_LIST: [&str; 12] = [
 //SECTION Rquest api
 use api::list_playlist;
 
-use api::get_login_status;
+use api::get_user_account;
 
 use isahc::cookies::CookieBuilder;
 
@@ -48,7 +48,7 @@ pub enum ListResponse {
 }
 
 pub enum GetResponse {
-    LoginStatus(LoginStatus),
+    LoginStatus(UserAccount),
     Qrcode(get_qrcode::Qrcode),
     QrloginStatus(get_qrlogin_status::QrloginStatus),
 }
@@ -69,7 +69,7 @@ use tauri::api::path::cache_dir;
 
 use crate::applications::netease::api::get_qrcode;
 
-use self::api::get_login_status::LoginStatus;
+use self::api::get_user_account::UserAccount;
 use self::api::get_qrlogin_status;
 
 use super::LOG_TARGET;
@@ -234,7 +234,7 @@ impl App {
         match api {
             GetRequest::LoginStatus => {
                 log::debug!(target: LOG_TARGET, "try to request GET with payload None");
-                match get_login_status::request(&self.client).await {
+                match get_user_account::request(&self.client).await {
                     Ok(response) => Some(GetResponse::LoginStatus(response)),
                     Err(err) => {
                         log::error!(target: LOG_TARGET, "failed to request Get login status: {}", err.to_string());

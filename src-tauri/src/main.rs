@@ -3,8 +3,6 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
-use services::setup;
-use tauri::async_runtime::Mutex;
 
 mod applications;
 mod services;
@@ -17,7 +15,7 @@ fn greet(name: &str) -> String {
 
 fn main() {
 
-
+    // FIXME use parking_lot primitives
     let builder = tauri::Builder::default()
         .setup(|app| Ok(services::setup(app)))
         .invoke_handler(tauri::generate_handler![

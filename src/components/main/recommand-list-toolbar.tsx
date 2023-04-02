@@ -1,6 +1,8 @@
-import { Typography, Box, IconButton } from "@mui/material";
+import { Typography, Box, IconButton, debounce } from "@mui/material";
 import { MoreHoriz } from "@mui/icons-material";
 import { testCookie, testCookieLoad } from "@/services/invoke/rquest";
+import { useEffect, useState } from "react";
+import { listen } from "@tauri-apps/api/event";
 
 // SECTION props type
 interface RecommandListToolBarProps {
@@ -13,8 +15,19 @@ export const RecommandListToolbar = (props: RecommandListToolBarProps) => {
   const { label } = props;
   // ~SECTION
 
-  // SECTION hook function
+  const [num, setNum] = useState(0);
 
+  // SECTION initialize effect
+  useEffect(debounce(() => {
+    const unlisten = listen("test-emit", ({ payload }) => {
+      setNum(num => num + 1);
+      console.log(payload);
+
+      return () => {
+        unlisten.then(f => f());
+      };
+    });
+  }, 500), []);
   // ~SECTION
   return (
     <Box
@@ -30,6 +43,7 @@ export const RecommandListToolbar = (props: RecommandListToolBarProps) => {
         }}
       >
         {label}
+        {num}
       </Typography>
       <IconButton onClick={() => {
         // testCookie();
