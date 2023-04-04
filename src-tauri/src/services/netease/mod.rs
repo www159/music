@@ -14,6 +14,7 @@ use tauri::async_runtime;
 use std::thread::sleep;
 use std::time::Duration;
 
+#[derive(Debug)]
 pub struct Service {
     unikey: Option<String>,
 }
@@ -66,21 +67,13 @@ pub fn get_qrcode(app_state: tauri::State<AppState>) -> Qrcode {
 pub fn create_qrcode_session(app_state: tauri::State<AppState>) {
     use applications::netease::api::get_qrlogin_status::QrloginStatus;
 
-    const EVENT: &str = "music-all://step";
 
- 
+    let app = app_state.netease_app.lock().unwrap();
+    let unikey = app_state.netease_service.lock().unwrap().get_unikey().unwrap();
+    let emitter = app_state.emit_service.lock().unwrap();
+
+    app.session_loop(unikey, &*emitter);
 }
-
-async fn session_loop(
-    app: applications::netease::App, 
-    service: services::netease::Service, 
-    emitter: services::emit::Service
-) {
-    log::debug!(target: LOG_TARGET, "session loop start");
-    sleep(Duration::from_secs(5));
-    log::debug!(target: LOG_TARGET, "session loop end");
-}
-
 
 use applications::netease::ListRequest;
 use applications::netease::ListResponse;

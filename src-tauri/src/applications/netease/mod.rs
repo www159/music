@@ -70,6 +70,8 @@ use std::time::Duration;
 use tauri::api::path::cache_dir;
 
 use crate::applications::netease::api::get_qrcode;
+use crate::services;
+use crate::services::netease;
 
 use self::api::get_qrlogin_status;
 use self::api::get_user_account::UserAccount;
@@ -256,6 +258,14 @@ impl App {
             }
         }
     }
+
+    pub async fn session_loop(&self, unikey: String, emitter: &services::emit::Service) {
+        const EVENT: &str = "music-all://step";
+        tauri::async_runtime::spawn(async move {
+            log::debug!(target: LOG_TARGET, "get unikey: {}", unikey);
+            log::debug!(target: LOG_TARGET, "get emitter: {:#?}", emitter);
+        });
+    } 
     // ~SECTION cookie store&load
 
     pub async fn get(&self, api: GetRequest) -> Option<GetResponse> {

@@ -13,6 +13,7 @@ pub enum EmitterField {
     MainWindow
 }
 
+#[derive(Debug)]
 // main window emitter
 pub struct Service {
     app_handle: tauri::AppHandle
