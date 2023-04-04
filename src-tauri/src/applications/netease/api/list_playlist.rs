@@ -15,6 +15,7 @@ pub struct PlayListData {
 pub struct Playlist {
     pub id: u64,
     pub name: String,
+    #[serde(rename = "coverImgUrl")]
     pub cover_img_url: String,
     pub author: String,
 }
@@ -22,7 +23,7 @@ pub struct Playlist {
 #[derive(Deserialize)]
 struct Json {
     pub playlists: Vec<PlayListJson>,
-    pub code: i32
+    pub code: i32,
 }
 
 #[derive(Deserialize)]

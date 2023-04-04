@@ -5,8 +5,8 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getBaseConfig } from "@/services/invoke/config";
 import { BaseErrorBoundary } from "@/components/base/base-error-bountery";
-import { routers } from "./routers";
-import { Route, Routes } from "react-router-dom";
+import { layoutRouters } from "./routers";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { Divider, Paper, Stack, ThemeProvider, createTheme } from "@mui/material";
 import { PlatformBar } from "@/components/layout/platform-bar";
 import { NaviButtons } from "@/components/layout/navi-buttons";
@@ -30,6 +30,8 @@ export const Layout = () => {
   );
 
   const { theme_mode } = baseConfig ?? {};
+
+  const { pathname } = useLocation();
   //~SECTION
 
   
@@ -73,9 +75,8 @@ export const Layout = () => {
                 width: "100%",
                 height: "100%"
               }}>
-              <NaviButtons />
               <Routes>
-                {routers.map(({ label, link, element: Elm }) => (
+                {layoutRouters.map(({ label, link, element: Elm }) => (
                   <Route key={label} path={link} element={<Elm />} />
                 ))}
               </Routes>

@@ -6,8 +6,10 @@ use super::super::api;
 
 #[derive(Debug, Default, Serialize)]
 pub struct UserAccount {
+    #[serde(rename = "userId")]
     pub user_id: u64,
     pub nickname: String,
+    #[serde(rename = "avatarImgUrl")]
     pub avatar_img_url: String,
 }
 

@@ -3,6 +3,7 @@ interface IBaseConfig {
     theme_mode?: "light" | "dark",
 }
 
+// ANCHOR list playlist
 interface PlayListData {
   order?: "hot" | "new",
   cat?: "全部",
@@ -13,6 +14,14 @@ interface PlayListData {
 interface Playlist {
   id: number,
   name: string,
-  cover_img_url: string,
+  coverImgUrl: string,
   author: string,
 }
+
+// ANCHOR get qrcode
+interface Qrcode {
+  rawData: string,
+  unikey: string,
+}
+
+// ANCHOR get qrcode status

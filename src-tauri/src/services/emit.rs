@@ -1,3 +1,7 @@
+//! emit `event` to frontend
+//! 
+//! encapsulation `emit_to` of [`tauri::AppHandle`]
+
 use std::fmt::Debug;
 
 use serde::Serialize;

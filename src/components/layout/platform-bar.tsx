@@ -1,9 +1,10 @@
-import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip, Typography } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useAtom } from "jotai";
 import { atomPlatforms } from "@/stores/platform-bar";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export const PlatformBar = () => {
 
@@ -35,7 +36,7 @@ export const PlatformBar = () => {
                 title= {platform}
                 placement="right"
               >
-                <ListItemButton>
+                <ListItemButton component={Link} to={"/"}>
                   <ListItemText primary={
                     <Typography
                       sx={{
@@ -52,7 +53,7 @@ export const PlatformBar = () => {
           ))}
           <Divider />
           <ListItem disablePadding>
-            <ListItemButton> 
+            <ListItemButton component={Link} to="/login">
               <ListItemIcon>
                 <MoreHorizIcon />
               </ListItemIcon>

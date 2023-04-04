@@ -1,10 +1,11 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use urlqstring::QueryParams;
 
 use crate::applications::netease::encryption;
 use super::super::api;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
+#[serde(tag = "type")]
 pub enum QrloginStatus {
     Expired,
     Scanning,

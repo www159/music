@@ -1,3 +1,5 @@
+//! resolve io and request
+
 pub mod netease;
 
 // SECTION const

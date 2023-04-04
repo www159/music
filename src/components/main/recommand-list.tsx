@@ -60,7 +60,7 @@ export const RecommandList = (props: RecommandListProps) => {
               }}
               key={playlist.id}
             >
-              <Avatar src={playlist.cover_img_url} />
+              <Avatar src={playlist.coverImgUrl} />
               <Typography 
                 sx={{
                   lineClamp: "2",

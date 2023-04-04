@@ -10,7 +10,9 @@ use log4rs::append::file::FileAppender;
 use log4rs::config::{Appender, Config, Logger, Root};
 use crate::applications::APP_DIR;
 
-
+/// init log service
+/// 
+/// use [`log4rs`] and [`log`]
 pub fn init_log() -> anyhow::Result<()> {
     let log_dir = cache_dir()
         .ok_or(anyhow::anyhow!("failed to get cache dir"))?

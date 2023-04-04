@@ -1,11 +1,12 @@
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 use urlqstring::QueryParams;
 
 use crate::applications::netease::encryption;
 use super::super::api;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize)]
 pub struct Qrcode {
+    #[serde(rename = "rawData")]
     pub raw_data: String,
     pub unikey: String
 }
