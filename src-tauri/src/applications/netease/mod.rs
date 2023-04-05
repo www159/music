@@ -56,7 +56,7 @@ pub enum GetResponse {
 }
 //~SECTION
 
-#[derive(Debug)]
+#[derive(Clone)]
 /// app to resolve request with netease cloud music api
 pub struct App {
     client: isahc::HttpClient,
@@ -72,7 +72,6 @@ use tauri::api::path::cache_dir;
 
 use crate::applications::netease::api::get_qrcode;
 use crate::services;
-use crate::services::netease;
 
 use self::api::get_qrlogin_status;
 use self::api::get_user_account::UserAccount;

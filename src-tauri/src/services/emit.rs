@@ -2,7 +2,7 @@
 //! 
 //! encapsulation `emit_to` of [`tauri::AppHandle`]
 
-use std::fmt::Debug;
+use std::{fmt::Debug, sync::Arc};
 
 use serde::Serialize;
 use tauri::Manager;
@@ -13,16 +13,16 @@ pub enum EmitterField {
     MainWindow
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 // main window emitter
 pub struct Service {
-    app_handle: tauri::AppHandle
+    app_handle: Arc<tauri::AppHandle>
 }
 
 impl Service {
     pub fn new(app_handle: tauri::AppHandle) -> Self {
         Self {
-            app_handle
+            app_handle: Arc::new(app_handle),
         }
     }
 

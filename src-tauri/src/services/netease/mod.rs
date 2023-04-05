@@ -5,39 +5,55 @@ use crate::applications;
 use crate::applications::netease;
 use crate::applications::netease::api::get_qrcode::Qrcode;
 use crate::services;
-use std::sync::{Mutex, Arc};
+use std::rc::Rc;
+use std::sync::{Arc};
+use parking_lot::{RwLock, Mutex};
 use std::time;
-use async_std::future::timeout;
+use tauri::async_runtime::JoinHandle;
 use services::AppState;
 use applications::LOG_TARGET;
 
-use async_std::task;
 use tauri::async_runtime;
 use std::thread::sleep;
 use std::time::Duration;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Service {
-    unikey: Option<String>,
+    unikey: Arc<RwLock<Option<String>>>,
+    qrcode_session: Arc<Mutex<Option<JoinHandle<()>>>>,
 }
 
 impl Service {
     pub fn new() -> Self {
         Service {
-            unikey: None,
+            unikey: Arc::new(RwLock::new(None)),
+            qrcode_session: Arc::new(Mutex::new(None)),
         }
     }
 
     // TODO use refcell instead of deep clone
     pub fn get_unikey(&self) -> Option<String> {
-        self.unikey.clone()
+        let atom = self.unikey.read();
+        let ret = atom.clone();
+        ret
     }
 
     pub fn set_unikey(&mut self, str: String) {
-        self.unikey = Some(str);
+        let mut unikey = self.unikey.write();
+        *unikey = Some(str);
     }
 
+    pub fn get_qrcode_session(&self) -> Option<JoinHandle<()>> {
+        let mut atom = self.qrcode_session.lock();
+        let ret = atom.take();
+        ret
 
+    }
+
+    pub fn set_qrcode_session(&mut self, task: JoinHandle<()>) {
+        let mut atom = self.qrcode_session.lock();
+        *atom = Some(task);
+    }
 }
 
 use applications::netease::GetRequest;
@@ -45,18 +61,21 @@ use applications::netease::GetResponse;
 
 #[tauri::command]
 pub fn get_qrcode(app_state: tauri::State<AppState>) -> Qrcode {
-    let app = app_state.netease_app.lock().unwrap();
-    let mut service = app_state.netease_service.lock().unwrap();
+    let app = app_state.netease_app.clone();
+    let mut service = app_state.netease_service.clone();
 
-    if let GetResponse::Qrcode(qrcode) = task::block_on(app.get(GetRequest::Qrcode)).unwrap() {
+    if let GetResponse::Qrcode(qrcode) = tauri::async_runtime::block_on(app.get(GetRequest::Qrcode)).unwrap() {
         // store unikey here
         // used by `create_qrcode_session`
         service.set_unikey(qrcode.unikey.clone());
+        log::debug!(target: LOG_TARGET, "unikey is {}", service.get_unikey().unwrap());
         return qrcode;
     }
     log::error!(target: LOG_TARGET, "failed to get qrcode");
     return Qrcode::default();
 }
+
+use netease::api::get_qrlogin_status::QrloginStatus;
 
 /// create qrcode login authentication session with Netease Cloud Music and frontend
 /// # proccess
@@ -64,46 +83,68 @@ pub fn get_qrcode(app_state: tauri::State<AppState>) -> Qrcode {
 /// - Expire: emit("music-all://step", -1), terminate the session
 /// - Scanning: no emit
 /// - Confirming: emit("music-all://step", 1)
-/// - Success: emit("music-all://step", 1), erminated the session.
+/// - Success: emit("music-all://step", 1), terminated the session.
 #[tauri::command]
 pub fn create_qrcode_session(app_state: tauri::State<AppState>) {
-
-    let (tx, mut rx) = tauri::async_runtime::channel(1);
-
-    
-    tauri::async_runtime::block_on(tx.send((
-        app_state.netease_app.clone(), 
-        app_state.netease_service.clone(), 
-        app_state.emit_service.clone()))).unwrap();
-    // let unikey = app_state.netease_service.lock().unwrap().get_unikey().unwrap();
-    // let emitter = app_state.emit_service.lock().unwrap();
+    let app = app_state.netease_app.clone();
+    let service = app_state.netease_service.clone();
+    let emitter = app_state.emit_service.clone();
 
     let task = tauri::async_runtime::spawn(async move {
-        if let Some(message) = rx.recv().await {
-            let (app, service, emitter) = message;
-            let app = app.lock().unwrap();
-            let service = service.lock().unwrap();
-            let emitter = emitter.lock().unwrap();
+        const EVENT: &str = "music-all://step";
+        let checkpoint = std::time::Instant::now();
 
-            log::debug!(target: LOG_TARGET, "receive params");
-
-            let begin = time::Instant::now();
-            loop {
-                let current = time::Instant::now();
-                if current - begin > Duration::from_secs(5) {
-                    log::debug!(target: LOG_TARGET, "loop 5 secs");
-                    break;
+        loop {
+            let unikey = service.get_unikey().unwrap();
+            if let GetResponse::QrloginStatus(status) = app.get(GetRequest::QrloginStatus(unikey)).await.unwrap() {
+                match status {
+                    QrloginStatus::Expired => {
+                        emitter.emit(EmitterField::MainWindow, EVENT, -1);
+                        break;
+                    },
+                    QrloginStatus::Scanning => {
+                        // do nothing
+                    },
+                    QrloginStatus::Confirming => {
+                        emitter.emit(EmitterField::MainWindow, EVENT, 1);
+                    }
+                    QrloginStatus::Success => {
+                        emitter.emit(EmitterField::MainWindow, EVENT, 1);
+                        break;
+                    }
                 }
-                log::debug!(target: LOG_TARGET, "next loop!");
             }
-        }
+
+            std::thread::sleep(Duration::from_millis(700));
+
+            let current = std::time::Instant::now();
+            if current - checkpoint > Duration::from_secs(30) {
+                log::debug!(target: LOG_TARGET, "session waiting too long time");
+                break;
+            }
+        }    
     });
 
-    std::thread::sleep(Duration::from_secs(2));
-    log::debug!(target: LOG_TARGET, "force kill task");
-    task.abort();
+    let mut service = app_state.netease_service.clone();
+    service.set_qrcode_session(task);
+    log::debug!(target: LOG_TARGET, "qrcode session stored");
 
+    tauri::async_runtime::spawn(async move {
+        // std::thread::sleep(Duration::from_secs(10));
+        // task.abort();
+        // log::debug!(target: LOG_TARGET, "session loop abort");    
+    });
+    
     // app.session_loop(unikey, &*emitter);
+}
+
+#[tauri::command]
+pub fn abort_qrcode_session(app_state: tauri::State<AppState>) {
+    log::debug!(target: LOG_TARGET, "aborting qrcode session start");
+    let serivce = app_state.netease_service.clone();
+    let task = serivce.get_qrcode_session().unwrap();
+    task.abort();
+    log::debug!(target: LOG_TARGET, "qrcode session abort");
 }
 
 // #[tauri::command]
@@ -119,7 +160,7 @@ use applications::netease::api::list_playlist::PlayListData;
 
 #[tauri::command]
 pub fn list_playlist(payload: PlayListData, app_state: tauri::State<'_, AppState>) -> Vec<Playlist> {
-    let app = app_state.netease_app.lock().unwrap();
+    let app = app_state.netease_app.clone();
     let ListResponse::PlayList(playlists) = tauri::async_runtime::block_on(app.list(ListRequest::PlayList(payload))).unwrap();
     playlists
 }
@@ -130,7 +171,7 @@ use isahc::cookies::CookieJar;
 use super::emit::EmitterField;
 #[tauri::command]
 pub fn test_cookie(app_state: tauri::State<AppState>) {
-    let mut app = app_state.netease_app.lock().unwrap();
+    let mut app = app_state.netease_app.clone();
     let cookie = CookieJar::default();
     app.set_cookie(cookie);
     app.save_cookie();
@@ -142,6 +183,6 @@ pub fn test_cookie_load(app_state: tauri::State<'_, AppState>) {
     // let mut app = app_state.netease_app.lock().unwrap();
     // app.load_cookie();
     
-    let emitter = app_state.emit_service.lock().unwrap();
+    let emitter = app_state.emit_service.clone();
     emitter.emit(EmitterField::MainWindow, "test-emit", "ok");
 }

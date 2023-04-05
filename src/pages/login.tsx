@@ -37,7 +37,6 @@ export const LoginPage = () => {
                 createQrcodeSession((val) => {
                   switch(val) {
                   case 1: stepNext(); break;
-                  case 0: stepNext(); break;
                   default: break;
                   }
                 }); 

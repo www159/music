@@ -4,7 +4,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, 
 import { QRCodeCanvas } from "qrcode.react";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { createQrcodeSession, getQrcode } from "@/services/invoke/rquest";
+import { abortQrocdeSession, createQrcodeSession, getQrcode } from "@/services/invoke/rquest";
 import { UnlistenFn } from "@tauri-apps/api/event";
 
 export const NeteaseQrcodeDialog = () => {
@@ -63,7 +63,10 @@ export const NeteaseQrcodeDialog = () => {
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={() => setDiagOpen(false)}
+          onClick={() => {
+            setDiagOpen(false);
+            abortQrocdeSession();
+          }}
         >
             exit
         </Button>
