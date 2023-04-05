@@ -6,6 +6,8 @@ use crate::applications::netease;
 use crate::applications::netease::api::get_qrcode::Qrcode;
 use crate::services;
 use std::sync::{Mutex, Arc};
+use std::time;
+use async_std::future::timeout;
 use services::AppState;
 use applications::LOG_TARGET;
 
@@ -65,15 +67,49 @@ pub fn get_qrcode(app_state: tauri::State<AppState>) -> Qrcode {
 /// - Success: emit("music-all://step", 1), erminated the session.
 #[tauri::command]
 pub fn create_qrcode_session(app_state: tauri::State<AppState>) {
-    use applications::netease::api::get_qrlogin_status::QrloginStatus;
 
+    let (tx, mut rx) = tauri::async_runtime::channel(1);
 
-    let app = app_state.netease_app.lock().unwrap();
-    let unikey = app_state.netease_service.lock().unwrap().get_unikey().unwrap();
-    let emitter = app_state.emit_service.lock().unwrap();
+    
+    tauri::async_runtime::block_on(tx.send((
+        app_state.netease_app.clone(), 
+        app_state.netease_service.clone(), 
+        app_state.emit_service.clone()))).unwrap();
+    // let unikey = app_state.netease_service.lock().unwrap().get_unikey().unwrap();
+    // let emitter = app_state.emit_service.lock().unwrap();
 
-    app.session_loop(unikey, &*emitter);
+    let task = tauri::async_runtime::spawn(async move {
+        if let Some(message) = rx.recv().await {
+            let (app, service, emitter) = message;
+            let app = app.lock().unwrap();
+            let service = service.lock().unwrap();
+            let emitter = emitter.lock().unwrap();
+
+            log::debug!(target: LOG_TARGET, "receive params");
+
+            let begin = time::Instant::now();
+            loop {
+                let current = time::Instant::now();
+                if current - begin > Duration::from_secs(5) {
+                    log::debug!(target: LOG_TARGET, "loop 5 secs");
+                    break;
+                }
+                log::debug!(target: LOG_TARGET, "next loop!");
+            }
+        }
+    });
+
+    std::thread::sleep(Duration::from_secs(2));
+    log::debug!(target: LOG_TARGET, "force kill task");
+    task.abort();
+
+    // app.session_loop(unikey, &*emitter);
 }
+
+// #[tauri::command]
+// async fn command_name<R: Runtime>(app: tauri::AppHandle<R>, window: tauri::Window<R>) -> Result<(), String> {
+//   Ok(())
+// }
 
 use applications::netease::ListRequest;
 use applications::netease::ListResponse;

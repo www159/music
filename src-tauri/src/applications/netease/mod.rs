@@ -56,6 +56,7 @@ pub enum GetResponse {
 }
 //~SECTION
 
+#[derive(Debug)]
 /// app to resolve request with netease cloud music api
 pub struct App {
     client: isahc::HttpClient,
@@ -261,10 +262,6 @@ impl App {
 
     pub async fn session_loop(&self, unikey: String, emitter: &services::emit::Service) {
         const EVENT: &str = "music-all://step";
-        tauri::async_runtime::spawn(async move {
-            log::debug!(target: LOG_TARGET, "get unikey: {}", unikey);
-            log::debug!(target: LOG_TARGET, "get emitter: {:#?}", emitter);
-        });
     } 
     // ~SECTION cookie store&load
 

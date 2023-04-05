@@ -3,7 +3,7 @@ pub mod emit;
 pub mod netease;
 pub mod log;
 
-use std::sync::{Mutex, Arc};
+use std::sync::{Arc, Mutex};
 use tauri::Manager;
 
 use self::log::init_log;
@@ -11,9 +11,9 @@ use crate::applications;
 
 /// global state managed by tauri
 pub struct AppState {
-    pub netease_app: Mutex<applications::netease::App>,
-    pub netease_service: Mutex<netease::Service>,
-    pub emit_service: Mutex<emit::Service>,
+    pub netease_app: Arc<Mutex<applications::netease::App>>,
+    pub netease_service: Arc<Mutex<netease::Service>>,
+    pub emit_service: Arc<Mutex<emit::Service>>,
 }
 
 /// setup applications and services
@@ -34,8 +34,8 @@ pub fn setup(app: & mut tauri::App) {
     let netease_service = netease::Service::new();
 
     app.manage(AppState {
-        netease_app: Mutex::new(netease_app),
-        netease_service: Mutex::new(netease_service),
-        emit_service: Mutex::new(emit_service),
+        netease_app: Arc::new(Mutex::new(netease_app)),
+        netease_service: Arc::new(Mutex::new(netease_service)),
+        emit_service: Arc::new(Mutex::new(emit_service)),
     });
 }
