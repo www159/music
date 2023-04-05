@@ -3,7 +3,6 @@ pub mod emit;
 pub mod netease;
 pub mod log;
 
-use std::sync::{Arc, Mutex};
 use tauri::Manager;
 
 use self::log::init_log;
@@ -30,7 +29,9 @@ pub fn setup(app: & mut tauri::App) {
 
     // setup global state
     let emit_service = emit::Service::new(app.app_handle());
-    let netease_app = applications::netease::App::new();
+    let mut netease_app = applications::netease::App::new();
+    netease_app.load_cookie();
+
     let netease_service = netease::Service::new();
 
     app.manage(AppState {

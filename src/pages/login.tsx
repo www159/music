@@ -4,11 +4,18 @@ import { atomDialogOpen } from "@/stores/login";
 import { atomStepNext } from "@/stores/netease-qrcode-dialog";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemButton, ListItemText, ListSubheader, Paper, Typography } from "@mui/material";
 import { useAtom } from "jotai";
+import { useEffect } from "react";
 
 export const LoginPage = () => {
   // SECTION store
   const [dialogOpen, setDiagOpen] = useAtom(atomDialogOpen);
   const [, stepNext] = useAtom(atomStepNext);
+  // ~SECTION
+
+  // SECTION initialize effect
+  useEffect(() => {
+    //TODO
+  }, []);
   // ~SECTION
   return (
     <Box

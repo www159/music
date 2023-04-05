@@ -15,13 +15,13 @@ fn greet(name: &str) -> String {
 
 fn main() {
 
-    // FIXME use `parking_lot` primitives
     let builder = tauri::Builder::default()
         .setup(|app| Ok(services::setup(app)))
         .invoke_handler(tauri::generate_handler![
             greet,
             services::netease::create_qrcode_session,
             services::netease::abort_qrcode_session,
+            services::netease::get_user_account,
             services::netease::get_qrcode,
             services::netease::list_playlist,
             services::netease::test_cookie,
@@ -32,7 +32,5 @@ fn main() {
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
 
-    app.run(|app_hander, event| match event {
-        _ => {}
-    });
+    app.run(|_, _| {});
 }

@@ -16,7 +16,7 @@ pub enum EmitterField {
 #[derive(Debug, Clone)]
 // main window emitter
 pub struct Service {
-    app_handle: Arc<tauri::AppHandle>
+    app_handle: Arc<tauri::AppHandle>,
 }
 
 impl Service {

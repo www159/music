@@ -56,8 +56,22 @@ pub enum GetResponse {
 }
 //~SECTION
 
-#[derive(Clone)]
 /// app to resolve request with netease cloud music api
+/// 
+/// ## cookie storage
+/// 1. try to get cookie from cache dir
+/// 2. if get cookie, create http client with cookie, goto<3>, else goto<6>
+/// 3. try to get login status with the cookie
+/// 4. if the cookie is valid, save new cookie to cache dir goto<7>
+/// 5. if the cookie expired, clean cookie file, goto<6>
+/// 6. request with guest mode
+/// 7. request with nomal mode
+/// 
+/// ## request
+/// - get request
+/// - list request
+/// TODO resolve all Err in app;
+#[derive(Clone)]
 pub struct App {
     client: isahc::HttpClient,
 }
@@ -71,25 +85,13 @@ use std::time::Duration;
 use tauri::api::path::cache_dir;
 
 use crate::applications::netease::api::get_qrcode;
-use crate::services;
 
 use self::api::get_qrlogin_status;
 use self::api::get_user_account::UserAccount;
 
 use super::LOG_TARGET;
 
-// TODO resolve all Err in app;
 impl App {
-    // ANCHOR new()
-    // <1> try to get cookie from cache dir
-    // <2> if get cookie, create http client with cookie, goto<3>, else goto<6>
-    // <3> try to get login status with the cookie
-    // <4> if the cookie is valid, save new cookie to cache dir goto<7>
-    // <5> if the cookie expired, clean cookie file, goto<6>
-    // <6> request with guest mode
-    // <7> request with nomal mode
-    //
-    // TODO implement nomal mode
     pub fn new() -> Self {
         let client = isahc::HttpClient::builder()
             .timeout(Duration::from_secs(TIMEOUT_SEC))
@@ -259,9 +261,6 @@ impl App {
         }
     }
 
-    pub async fn session_loop(&self, unikey: String, emitter: &services::emit::Service) {
-        const EVENT: &str = "music-all://step";
-    } 
     // ~SECTION cookie store&load
 
     pub async fn get(&self, api: GetRequest) -> Option<GetResponse> {
