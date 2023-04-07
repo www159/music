@@ -1,4 +1,4 @@
-import { atomDialogOpen } from "@/stores/login";
+import { atomDialogOpen, atomSetLogin } from "@/stores/login";
 import { atomStepIndexRead, atomStepNext, atomStepsRead } from "@/stores/netease-qrcode-dialog";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Step, StepLabel, Stepper } from "@mui/material";
 import { QRCodeCanvas } from "qrcode.react";
@@ -12,10 +12,11 @@ export const NeteaseQrcodeDialog = () => {
   const [qrcode, setQrcode] = useState("");
   // ~SECTION
   // SECTION store
-  const [dialogOpen, setDiagOpen] = useAtom(atomDialogOpen);
   const [steps] = useAtom(atomStepsRead);
   const [stepIndex] = useAtom(atomStepIndexRead);
 
+  const [, setLogin] = useAtom(atomSetLogin);
+  const [, setDialogOpen] = useAtom(atomDialogOpen);
   // ~SECTION
 
   // SECTION initialize effect
@@ -24,24 +25,24 @@ export const NeteaseQrcodeDialog = () => {
       .then(qrcode => {
         setQrcode(qrcode.rawData);
       });
+    
+    // setLogin(["Netease", true]);
   }, []);
   // ~SECTION
+
   return (
-    <Dialog
-      open={dialogOpen}
-    >
+    <>
       <DialogTitle>
-          login
-      </DialogTitle>
-      <DialogContent 
+      login
+      </DialogTitle><DialogContent
         dividers
       >
         <Stack alignItems="center">
           <Box>
             <QRCodeCanvas value={qrcode} size={140} />
           </Box>
-          <Stepper 
-            nonLinear 
+          <Stepper
+            nonLinear
             activeStep={stepIndex}
             sx={{
               minWidth: {
@@ -60,17 +61,16 @@ export const NeteaseQrcodeDialog = () => {
             ))}
           </Stepper>
         </Stack>
-      </DialogContent>
-      <DialogActions>
+      </DialogContent><DialogActions>
         <Button
           onClick={() => {
-            setDiagOpen(false);
+            setDialogOpen(false);
             abortQrocdeSession();
-          }}
+          } }
         >
-            exit
+          exit
         </Button>
       </DialogActions>
-    </Dialog>
+    </>
   );
 };

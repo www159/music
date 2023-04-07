@@ -5,6 +5,8 @@ enum RequestInvoke {
   abortQrocdeSession = "abort_qrcode_session",
   createQrcodeSession = "create_qrcode_session",
   getQrcode = "get_qrcode",
+  getUserAccount = "get_user_account",
+  getPlaylistDetail = "get_playlist_detail",
   listPlaylist = "list_playlist",
   testCookie = "test_cookie",
   testCookieLoad = "test_cookie_load",
@@ -29,9 +31,19 @@ export const getQrcode = async () => {
   return await invoke<Qrcode>(RequestInvoke.getQrcode);
 };
 
+export const getUserAccount = async () => {
+  return await invoke<UserAccount>(RequestInvoke.getUserAccount);
+};
+
+export const getPlaylistDetail = async (payload: PlaylistDetailData) => {
+  return await invoke<PlaylistDetail>(RequestInvoke.getPlaylistDetail, {
+    payload,
+  });
+};
+
 export const listPlaylist = async (payload: PlayListData) => {
   return await invoke<Playlist[]>(RequestInvoke.listPlaylist, {
-    payload
+    payload,
   });
 };
 

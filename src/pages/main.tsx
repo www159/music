@@ -11,7 +11,7 @@ export const MainPage = () => {
       spacing={2}
       sx={{
         width: "100%",
-        height: "100%",
+        height: "calc(100% - 50px)",
         overflowY: "scroll",
       }}
     >

@@ -1,20 +1,35 @@
 import { NeteaseQrcodeDialog } from "@/components/login/netease-qrcode-dialog";
-import { createQrcodeSession } from "@/services/invoke/rquest";
-import { atomDialogOpen } from "@/stores/login";
+import { createQrcodeSession, getUserAccount } from "@/services/invoke/rquest";
+import { atomDialogOpen, atomLoginedPlatforms, atomOpenedDialog, atomOpenedDialogIndex, atomPlatforms, atomSetLogin } from "@/stores/login";
 import { atomStepNext } from "@/stores/netease-qrcode-dialog";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemButton, ListItemText, ListSubheader, Paper, Typography } from "@mui/material";
+import { CheckCircle, Login } from "@mui/icons-material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Paper, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
 export const LoginPage = () => {
   // SECTION store
-  const [dialogOpen, setDiagOpen] = useAtom(atomDialogOpen);
-  const [, stepNext] = useAtom(atomStepNext);
+  const [dialogOpen, setDialogOpen] = useAtom(atomDialogOpen);
+  const [OpenedDialog] = useAtom(atomOpenedDialog);
+  const [, setOpenedDialogIndex] = useAtom(atomOpenedDialogIndex);
+  const [platforms] = useAtom(atomPlatforms);
+  const [loginedPlatforms] = useAtom(atomLoginedPlatforms);
+  const [, setLogin] = useAtom(atomSetLogin);
   // ~SECTION
 
   // SECTION initialize effect
   useEffect(() => {
-    //TODO
+    console.log("logined: ", loginedPlatforms);
+    // checklogin
+    getUserAccount()
+      .then((data) => {
+
+        console.log("recieve!");
+        if(data.userId !== 0) {
+          setLogin(["Netease", true]);
+          console.log(loginedPlatforms);
+        }
+      });
   }, []);
   // ~SECTION
   return (
@@ -37,24 +52,46 @@ export const LoginPage = () => {
           <ListSubheader>
           platform
           </ListSubheader>
-          <ListItem>
-            <ListItemButton
-              onClick={() => { 
-                setDiagOpen(true);
-                createQrcodeSession((val) => {
-                  switch(val) {
-                  case 1: stepNext(); break;
-                  default: break;
+          {platforms.map((platform, index) => (
+            <ListItem key={index}>
+              <ListItemButton
+                onClick={() => { 
+                  if(loginedPlatforms[index]) {
+                    // TODO
                   }
-                }); 
-              }}
-            >
-              <ListItemText primary={<Typography>
-              Netease
-              </Typography>} 
-              />
-            </ListItemButton>
-          </ListItem>
+                  else {
+                    setOpenedDialogIndex(index);
+                    setDialogOpen(true);
+  
+                  }
+                  // setDiagOpen(true);
+                  // createQrcodeSession((val) => {
+                  //   switch(val) {
+                  //   case 1: stepNext(); break;
+                  //   default: break;
+                  //   }
+                  // }); 
+                }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <ListItemText primary={<Typography>
+                  {platform}
+                </Typography>} 
+                />
+                {loginedPlatforms[index] && <ListItemIcon
+                  sx={{
+                    color: "green",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <CheckCircle />
+                </ListItemIcon>}
+              </ListItemButton>
+            </ListItem>
+          ))}
           <ListItem>
             <ListItemButton>
               <ListItemText primary={<Typography>
@@ -65,7 +102,12 @@ export const LoginPage = () => {
           </ListItem>
         </List>
       </Paper>
-      <NeteaseQrcodeDialog />
+      <Dialog 
+        open={dialogOpen}
+      >
+        <OpenedDialog />
+      </Dialog>
+      {/* <NeteaseQrcodeDialog /> */}
     </Box>
   );
 };

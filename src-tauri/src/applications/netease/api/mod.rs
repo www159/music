@@ -2,6 +2,7 @@
 pub mod get_user_account;
 pub mod get_qrcode;
 pub mod get_qrlogin_status;
+pub mod get_playlist_detail;
 
 // list request
 pub mod list_playlist;

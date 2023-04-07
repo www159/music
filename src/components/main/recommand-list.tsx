@@ -1,9 +1,10 @@
 import { listPlaylist } from "@/services/invoke/rquest";
-import { atomPlaylists, atomPlaylistsSome } from "@/stores/recommend-list";
-import { Avatar, Box, Grid, Paper, Stack, Typography, debounce } from "@mui/material";
+import { atomPlaylistId, atomPlaylists, atomPlaylistsSome } from "@/stores/recommend-list";
+import { Avatar, Box, Button, Grid, Paper, Stack, Typography, debounce } from "@mui/material";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { RecommandListToolbar } from "./recommand-list-toolbar";
+import { useNavigate } from "react-router-dom";
 
 // SECTION props type
 interface RecommandListProps {
@@ -17,7 +18,9 @@ export const RecommandList = (props: RecommandListProps) => {
 
   // SECTION store
   const [, setPlaylists] = useAtom(atomPlaylists);
-  const [playlists, ] = useAtom(atomPlaylistsSome);
+  const [playlists] = useAtom(atomPlaylistsSome);
+  const [, setPlaylistId] = useAtom(atomPlaylistId);
+  const navigate = useNavigate();
   // ~SECTION
   
   // SECTION initialize effect
@@ -53,27 +56,35 @@ export const RecommandList = (props: RecommandListProps) => {
               item
               xs={1}
               md={2} 
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-              }}
               key={playlist.id}
             >
-              <Avatar src={playlist.coverImgUrl} />
-              <Typography 
+              <Button
                 sx={{
-                  lineClamp: "2",
-                  wordBreak: "break-all",
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  fontSize: 10,
-                  width: "15ch",
-                  marginTop: "1ch",
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+                onClick={() => {
+                  setPlaylistId(playlist.id);
+                  navigate("/playlist");
                 }}
               >
-                {playlist.name}
-              </Typography>
+                <Avatar src={playlist.coverImgUrl} />
+                <Typography 
+                  sx={{
+                    lineClamp: "2",
+                    wordBreak: "break-all",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    fontSize: 10,
+                    width: "15ch",
+                    marginTop: "1ch",
+                    color: "black"
+                  }}
+                >
+                  {playlist.name}
+                </Typography>
+              </Button>
             </Grid>
           ))}
         </Grid>

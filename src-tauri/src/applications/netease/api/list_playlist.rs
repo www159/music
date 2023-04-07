@@ -4,7 +4,7 @@ use super::super::api;
 use super::super::encryption;
 
 #[derive(Debug, Deserialize)]
-pub struct PlayListData {
+pub struct PlaylistData {
     pub order: Option<String>,
     pub cat: Option<String>,
     pub offset: Option<u32>,
@@ -40,7 +40,7 @@ struct CreatorJson {
    pub  nickname: String,
 }
 
-pub async fn request(playlist_data: PlayListData, client: &isahc::HttpClient) -> anyhow::Result<Vec<Playlist>> {
+pub async fn request(playlist_data: PlaylistData, client: &isahc::HttpClient) -> anyhow::Result<Vec<Playlist>> {
     // TODO use a macro    
     let order = playlist_data.order.unwrap_or("hot".to_string());
     let cat = playlist_data.cat.unwrap_or("全部".to_string());
@@ -62,7 +62,6 @@ pub async fn request(playlist_data: PlayListData, client: &isahc::HttpClient) ->
         client,
         api::USERPLATFORM::PC
     ).await?;
-    
     into(res_str)
     // Ok(serde_json::Value::default())
 }
@@ -92,19 +91,21 @@ fn into(res_str: String) -> anyhow::Result<Vec<Playlist>> {
 
 #[cfg(test)]
 mod tests {
+    use crate::applications;
+
     use super::*;
     #[actix_rt::test]
     async fn request_works() {
     	// guest api
-    	let client = isahc::HttpClient::new().unwrap();
-    	let request_data = PlayListData {
+    	let app = applications::netease::App::new();
+    	let request_data = PlaylistData {
     	    order: None,
     	    cat: None,
     	    limit: None,
     	    offset: None,
     	};
-    	let playlists = request(request_data, &client).await.unwrap();
-    	println!("{:#?}", playlists);
+    	let playlists = request(request_data, &app.client).await.unwrap();
+    	// println!("{:#?}", playlists);
     }
     #[test]
     fn into_works() {

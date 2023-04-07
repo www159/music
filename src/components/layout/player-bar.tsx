@@ -5,8 +5,10 @@ export const PlayerBar = () => {
     <Box
       sx={{
         width: "100%",
-        height: "100px",
+        height: "50px",
         bgcolor: "secondary.main",
+        position: "fixed",
+        bottom: "0",
       }}>
       <Typography>
         this is player bar!

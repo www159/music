@@ -1,23 +1,19 @@
 import { Box, Button, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip, Typography } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useAtom } from "jotai";
-import { atomPlatforms } from "@/stores/platform-bar";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { atomPlatforms } from "@/stores/login";
 
 export const PlatformBar = () => {
 
   // SECTION store
-  const [platforms, setPlatforms] = useAtom(atomPlatforms);
+  const [platforms] = useAtom(atomPlatforms);
   // ~SECTION
   
   // SECTION initialize effect
   useEffect(() => {
-    setPlatforms([
-      "Netease",
-      "Blank",
-    ]);
+    // TODO
   }, []);
   return (
     <Box sx={{

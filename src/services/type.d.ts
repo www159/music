@@ -24,4 +24,34 @@ interface Qrcode {
   unikey: string,
 }
 
-// ANCHOR get qrcode status
+// ANCHOR get user account
+interface UserAccount {
+  userId: number,
+  nickname: string,
+  avatarImgUrl: string,
+}
+
+// ANCHOR get playlist detail
+interface PlaylistDetailData {
+  id: number,
+  size?: number,
+}
+interface PlaylistDetail {
+  id: number,
+  name: string,
+  coverImgUrl: string,
+  description: string,
+  createTime: number,
+  trackUpdateTime: number,
+  songs: Song[],
+}
+
+interface Song {
+  id: number,
+  name: string,
+  singer: string[],
+  album: string,
+  albumId: number,
+  coverImgUrl: string,
+  duration: number,
+}

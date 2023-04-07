@@ -23,6 +23,7 @@ fn main() {
             services::netease::abort_qrcode_session,
             services::netease::get_user_account,
             services::netease::get_qrcode,
+            services::netease::get_playlist_detail,
             services::netease::list_playlist,
             services::netease::test_cookie,
             services::netease::test_cookie_load,

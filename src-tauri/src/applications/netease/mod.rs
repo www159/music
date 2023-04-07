@@ -27,20 +27,25 @@ const BASE_URI_LIST: [&str; 12] = [
 //~SECTION
 
 //SECTION Rquest api
-use api::list_playlist;
-
-use api::get_user_account;
 
 use isahc::cookies::CookieBuilder;
 
+use api::get_playlist_detail;
+use api::get_qrcode;
+use api::get_qrlogin_status;
+use api::get_user_account;
+
+use api::list_playlist;
+
 pub enum ListRequest {
-    PlayList(list_playlist::PlayListData),
+    PlayList(list_playlist::PlaylistData),
 }
 
 pub enum GetRequest {
-    UserAccount,
+    PlaylistDetail(get_playlist_detail::PlaylistDetailData),
     Qrcode,
     QrloginStatus(String),
+    UserAccount,
 }
 //~SECTION
 
@@ -50,9 +55,10 @@ pub enum ListResponse {
 }
 
 pub enum GetResponse {
-    UserAccount(UserAccount),
+    PlaylistDetail(get_playlist_detail::PlaylistDetail),
     Qrcode(get_qrcode::Qrcode),
     QrloginStatus(get_qrlogin_status::QrloginStatus),
+    UserAccount(get_user_account::UserAccount),
 }
 //~SECTION
 
@@ -78,16 +84,20 @@ pub struct App {
 
 use cookie_store::CookieStore;
 use isahc::cookies::CookieJar;
+use isahc::http::response;
 use isahc::prelude::Configurable;
 use std::fs;
 use std::io;
 use std::time::Duration;
 use tauri::api::path::cache_dir;
 
-use crate::applications::netease::api::get_qrcode;
 
-use self::api::get_qrlogin_status;
-use self::api::get_user_account::UserAccount;
+// use api::get_playlist_detail::PlaylistDetail;
+// use api::get_playlist_detail::PlaylistDetailData;
+// use api::get_user_account::UserAccount;
+
+// use api::list_playlist::Playlist;
+// use api::list_playlist::PlaylistData;
 
 use super::LOG_TARGET;
 
@@ -104,7 +114,7 @@ impl App {
     // SECTION cookie store&load
     /// set client cookie with [`isahc::cookie::CookieJar`]
     pub fn set_cookie(&mut self, cookie_jar: isahc::cookies::CookieJar) {
-        log::debug!(target: LOG_TARGET, "try to set cookie: {:#?}", cookie_jar);
+        log::debug!(target: LOG_TARGET, "try to set cookie");
 
         self.client = isahc::HttpClient::builder()
             .timeout(Duration::from_secs(TIMEOUT_SEC))
@@ -246,7 +256,7 @@ impl App {
                         }
                     }
                 }
-                log::debug!(target: LOG_TARGET, "load cookie: {:#?}", cookie_jar);
+                log::debug!(target: LOG_TARGET, "cookie loaded");
                 self.set_cookie(cookie_jar);
             }
             Err(err) => {
@@ -308,6 +318,19 @@ impl App {
                             "failed to request Get qrcode login status: {}",
                             err.to_string()
                         );
+                        None
+                    }
+                }
+            },
+
+            GetRequest::PlaylistDetail(playlist_detail_data) => {
+                log::debug!(target: LOG_TARGET, "try to request Get with payload: {:#?}", playlist_detail_data);
+                match get_playlist_detail::request(playlist_detail_data, &self.client).await {
+                    Ok(response) => Some(GetResponse::PlaylistDetail(response)),
+                    Err(err) => {
+                        log::error!(target: LOG_TARGET,
+                        "failed to request playlist detail status: {}",
+                        err.to_string());
                         None
                     }
                 }

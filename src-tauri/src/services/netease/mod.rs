@@ -164,14 +164,27 @@ pub fn get_user_account(app_state: tauri::State<AppState>) -> UserAccount {
     UserAccount::default()
 }
 
+use applications::netease::api::get_playlist_detail::PlaylistDetail;
+use applications::netease::api::get_playlist_detail::PlaylistDetailData;
+#[tauri::command]
+pub fn get_playlist_detail(payload: PlaylistDetailData, app_state: tauri::State<AppState>) -> PlaylistDetail {
+    let app = app_state.netease_app.clone();
+    if let Some(GetResponse::PlaylistDetail(playlist_detail)) = tauri::async_runtime::block_on(app.get(GetRequest::PlaylistDetail(payload))) {
+        // log::debug!(target: LOG_TARGET, "{:#?}", playlist_detail.songs);
+        return playlist_detail;
+    }
+
+    PlaylistDetail::default()
+}
+
 use applications::netease::ListRequest;
 use applications::netease::ListResponse;
 
 use applications::netease::api::list_playlist::Playlist;
-use applications::netease::api::list_playlist::PlayListData;
+use applications::netease::api::list_playlist::PlaylistData;
 
 #[tauri::command]
-pub fn list_playlist(payload: PlayListData, app_state: tauri::State<'_, AppState>) -> Vec<Playlist> {
+pub fn list_playlist(payload: PlaylistData, app_state: tauri::State<'_, AppState>) -> Vec<Playlist> {
     let app = app_state.netease_app.clone();
     let ListResponse::PlayList(playlists) = tauri::async_runtime::block_on(app.list(ListRequest::PlayList(payload))).unwrap();
     playlists

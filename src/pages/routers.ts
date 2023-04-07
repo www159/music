@@ -1,5 +1,6 @@
 import { MainPage } from "./main";
 import { LoginPage } from "./login";
+import { PlaylistPage } from "./playlist";
 
 interface RouterListItem {
     label: string,
@@ -17,5 +18,10 @@ export const layoutRouters: RouterListItem[] = [
     label: "label-login",
     link: "/login",
     element: LoginPage,
+  },
+  {
+    label: "label-playlist",
+    link: "playlist",
+    element: PlaylistPage,
   }
 ];
